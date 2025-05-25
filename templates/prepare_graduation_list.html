@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Prepare Advisor Graduation List{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10 col-xl-8">
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-header bg-danger text-white text-center rounded-top">
+        <h3 class="mb-0 fw-bold">Prepare Advisor Graduation List</h3>
+      </div>
+      <div class="card-body">
+        <p class="lead mb-4 text-center">
+          Select advisees who have applied for graduation (<span class="fw-bold text-danger">status: APPLIED</span>) to include in this list.
+        </p>
+        {% if advisees %}
+        <form method="POST">
+          <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle rounded">
+              <thead class="table-danger">
+                <tr>
+                  <th><input type="checkbox" id="select-all"></th>
+                  <th>Student ID</th>
+                  <th>Email</th>
+                  <th>Faculty</th>
+                  <th>Department</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in advisees %}
+                  {% if student.graduation_status == 'applied' %}
+                  <tr>
+                    <td>
+                      <input type="checkbox" name="student_ids" value="{{ student.student_user_id }}">
+                    </td>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.faculty }}</td>
+                    <td>{{ student.department }}</td>
+                    <td>
+                      <span class="badge bg-danger">{{ student.graduation_status|capitalize }}</span>
+                    </td>
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-danger btn-lg px-5 rounded-pill fw-bold shadow">Submit Graduation List</button>
+          </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info text-center mb-0 rounded-pill">
+          <strong>No advisees with <span class="text-danger">APPLIED</span> graduation status to display.</strong><br>
+          <small class="text-muted">Students must first request graduation for them to appear here.</small>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById('select-all')?.addEventListener('change', function() {
+  document.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = this.checked);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}Termination Request Status{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+        <!-- Request Overview Card -->
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-info text-white text-center rounded-top">
+                <h3 class="mb-0 fw-bold">Termination Request Status</h3>
+            </div>
+            <div class="card-body p-4">
+                {% if termination_request %}
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-info">Request Information</h5>
+                            <p class="mb-1"><strong>Request ID:</strong> #{{ termination_request.id }}</p>
+                            <p class="mb-1"><strong>Student ID:</strong> {{ termination_request.student_number }}</p>
+                            <p class="mb-1"><strong>Faculty:</strong> {{ termination_request.faculty }}</p>
+                            <p class="mb-1"><strong>Department:</strong> {{ termination_request.department }}</p>
+                            <p class="mb-1"><strong>Submitted:</strong> {{ termination_request.request_date }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-info">Current Status</h5>
+                            <p class="mb-1">
+                                <strong>Overall Status:</strong>
+                                <span class="badge bg-{{ 'success' if termination_request.status == 'approved' else ('danger' if termination_request.status == 'rejected' else 'warning') }} fs-6">
+                                    {{ termination_request.status | capitalize }}
+                                </span>
+                            </p>
+                            <p class="mb-1"><strong>Units Approved:</strong> {{ approved_units }}/{{ total_units }}</p>
+                            {% if rejected_units > 0 %}
+                                <p class="mb-1 text-danger"><strong>Units Rejected:</strong> {{ rejected_units }}</p>
+                            {% endif %}
+                            {% if termination_request.completion_date %}
+                                <p class="mb-1"><strong>Completed:</strong> {{ termination_request.completion_date }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-info mb-3">Approval Progress</h5>
+                        <div class="progress mb-2" style="height: 25px;">
+                            {% if rejected_units > 0 %}
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 100%">
+                                    Request Rejected
+                                </div>
+                            {% elif termination_request.status == 'approved' %}
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%">
+                                    Fully Approved ({{ approved_units }}/{{ total_units }})
+                                </div>
+                            {% else %}
+                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress_percentage }}%">
+                                    {{ approved_units }}/{{ total_units }} Units Approved
+                                </div>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">
+                            {% if rejected_units > 0 %}
+                                Your termination request has been rejected by one or more units.
+                            {% elif termination_request.status == 'approved' %}
+                                🎉 Congratulations! Your termination request has been fully approved.
+                            {% else %}
+                                {{ pending_units }} unit(s) still reviewing your request.
+                            {% endif %}
+                        </small>
+                    </div>
+
+                    <!-- Unit Approvals Details -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-info mb-3">Unit Approval Details</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle">
+                                <thead class="table-info">
+                                    <tr>
+                                        <th>Unit</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Comments</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for approval in unit_approvals %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ approval.display_name }}</strong>
+                                            {% if approval.title %}
+                                                <br><small class="text-muted">{{ approval.title }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if approval.status == 'approved' %}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Approved
+                                                </span>
+                                            {% elif approval.status == 'rejected' %}
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-x-circle me-1"></i>Rejected
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning">
+                                                    <i class="bi bi-clock me-1"></i>Pending
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if approval.approval_date %}
+                                                {{ approval.approval_date }}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if approval.comments %}
+                                                {{ approval.comments }}
+                                            {% else %}
+                                                <span class="text-muted">No comments</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Final Notes -->
+                    {% if termination_request.final_notes %}
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold">Final Notes:</h6>
+                            <p class="mb-0">{{ termination_request.final_notes }}</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="text-center">
+                        <a href="{{ url_for('home') }}" class="btn btn-secondary btn-lg me-2">
+                            <i class="bi bi-house me-2"></i>Back to Home
+                        </a>
+                        {% if termination_request.status == 'rejected' %}
+                            <a href="{{ url_for('request_termination') }}" class="btn btn-danger btn-lg">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Submit New Request
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

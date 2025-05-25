@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Prepare Faculty Graduation List{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10 col-xl-8">
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-header bg-danger text-white text-center rounded-top">
+        <h3 class="mb-0 fw-bold">Prepare Faculty Graduation List - {{ faculty_name }}</h3>
+      </div>
+      <div class="card-body">
+        {% if department_lists_for_review %}
+        <form method="POST">
+          {% for list in department_lists_for_review %}
+          <div class="mb-4">
+            <h5 class="fw-bold text-danger">Department: {{ list.department_name }} | Submitted:
+              {% if list.list_creation_date %}
+                {{ list.list_creation_date.strftime('%Y-%m-%d %H:%M') if list.list_creation_date.__class__.__name__ == 'datetime' else list.list_creation_date }}
+              {% else %}N/A{% endif %}
+            </h5>
+            <div class="table-responsive">
+              <table class="table table-bordered table-sm align-middle rounded">
+                <thead class="table-danger">
+                  <tr>
+                    <th><input type="checkbox" class="select-all-in-list"></th>
+                    <th>Student ID</th>
+                    <th>Email</th>
+                    <th>Faculty</th>
+                    <th>Department</th>
+                    <th>Rank</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for student in list.students %}
+                  <tr>
+                    <td>
+                      <input type="checkbox" name="student_ids" value="{{ student.student_user_id }}">
+                    </td>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.student_email }}</td>
+                    <td>{{ student.faculty }}</td>
+                    <td>{{ student.department }}</td>
+                    <td>{{ student.rank if student.rank else 'N/A' }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% endfor %}
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-danger btn-lg px-5 rounded-pill fw-bold shadow">Create Faculty Graduation List</button>
+          </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info text-center mb-0 rounded-pill">
+          <strong>No department lists are currently pending your review for this faculty.</strong>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.select-all-in-list').forEach(function(checkbox) {
+  checkbox.addEventListener('change', function() {
+    const cardBody = this.closest('div.mb-4');
+    cardBody.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = this.checked);
+  });
+});
+</script>
+{% endblock %}

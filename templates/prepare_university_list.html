@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Prepare University Graduation List{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10 col-xl-8">
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-header bg-danger text-white text-center rounded-top">
+        <h3 class="mb-0 fw-bold">Prepare Final University Graduation List</h3>
+      </div>
+      <div class="card-body">
+        <p class="lead text-center mb-4">
+          Select students from faculty-submitted lists (<span class="fw-bold text-danger">Pending Student Affairs Review</span>) to include in the final university graduation list.<br>
+          Students included will be marked as <span class="fw-bold text-danger">Graduated</span>.
+        </p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% if faculty_lists_for_review %}
+        <form method="POST" action="{{ url_for('prepare_university_list') }}">
+          {% for fac_list in faculty_lists_for_review %}
+          <div class="card mb-4 border-danger shadow-sm">
+            <div class="card-header bg-danger text-white rounded-top">
+              <h5 class="mb-0">Faculty: {{ fac_list.faculty_name }}</h5>
+              <p class="mb-0 small text-white-50">
+                List ID: {{ fac_list.faculty_list_id }} (Submitted by: {{ fac_list.dean_email }} on
+                {{ fac_list.list_creation_date.strftime('%Y-%m-%d %H:%M') if fac_list.list_creation_date else 'N/A' }})
+              </p>
+            </div>
+            <div class="card-body">
+              {% if fac_list.students %}
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle rounded">
+                  <thead class="table-danger">
+                    <tr>
+                      <th><input type="checkbox" class="select-all-in-list"></th>
+                      <th>Student ID</th>
+                      <th>Email</th>
+                      <th>Faculty</th>
+                      <th>Department</th>
+                      <th>Rank (Deanery)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for student in fac_list.students %}
+                    <tr>
+                      <td>
+                        <input type="checkbox" name="student_ids" value="{{ student.student_user_id }}" class="form-check-input">
+                      </td>
+                      <td>{{ student.student_id }}</td>
+                      <td>{{ student.student_email }}</td>
+                      <td>{{ student.faculty }}</td>
+                      <td>{{ student.department }}</td>
+                      <td>{{ student.rank }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <p class="text-muted fst-italic">No students found in this particular faculty list.</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-danger btn-lg px-5 rounded-pill fw-bold shadow">
+              Finalize University List &amp; Mark Students as Graduated
+            </button>
+          </div>
+        </form>
+        {% else %}
+        <div class="alert alert-info text-center mb-0 rounded-pill">
+          <strong>No faculty lists are currently awaiting final university-level consolidation.</strong><br>
+          <small class="text-muted">Deaneries must first submit their faculty lists (status: 'Pending Student Affairs Review') for them to appear here.</small>
+        </div>
+        {% endif %}
+        <div class="text-center mt-4">
+          <a href="{{ url_for('home') }}" class="btn btn-outline-danger rounded-pill px-4">Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.select-all-in-list').forEach(function(checkbox) {
+  checkbox.addEventListener('change', function() {
+    const cardBody = this.closest('.card');
+    cardBody.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = this.checked);
+  });
+});
+</script>
+{% endblock %}

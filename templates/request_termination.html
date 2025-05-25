@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Request Termination{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-danger text-white text-center rounded-top">
+                <h3 class="mb-0 fw-bold">Request University Termination</h3>
+            </div>
+            <div class="card-body p-5">
+                {% if student_info %}
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading fw-bold">📋 Student Information</h5>
+                        <p class="mb-1"><strong>Student ID:</strong> {{ student_info.student_number }}</p>
+                        <p class="mb-1"><strong>Faculty:</strong> {{ student_info.faculty }}</p>
+                        <p class="mb-1"><strong>Department:</strong> {{ student_info.department }}</p>
+                        <p class="mb-0">
+                            <strong>Graduation Status:</strong> 
+                            <span class="badge bg-{{ 'success' if student_info.graduation_status == 'graduated' else 'secondary' }}">
+                                {{ student_info.graduation_status | capitalize }}
+                            </span>
+                        </p>
+                    </div>
+                {% endif %}
+
+                {% if can_terminate %}
+                    <div class="alert alert-warning mb-4">
+                        <h5 class="alert-heading fw-bold">⚠️ Important Information</h5>
+                        <p class="mb-0">Your termination request must be approved by the following units:</p>
+                        <ul class="mb-0 mt-2">
+                            <li>Library (Return all borrowed books)</li>
+                            <li>Alumni Office (Update contact information)</li>
+                            <li>Department of Health, Culture and Sports</li>
+                            <li>Information Technologies Department</li>
+                            <li>Student Affairs (Final approval)</li>
+                        </ul>
+                    </div>
+
+                    <form method="POST" class="text-center">
+                        <p class="lead mb-4">
+                            As a graduated student, you can now request university termination.<br>
+                            Are you sure you want to initiate the termination process?
+                        </p>
+                        <button type="submit" class="btn btn-danger btn-lg px-5 rounded-pill fw-bold shadow">
+                            Submit Termination Request
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-danger text-center">
+                        <h5 class="alert-heading fw-bold">❌ Termination Not Available</h5>
+                        <p class="mb-0">
+                            You can only request termination after graduating from the university.<br>
+                            {% if student_info and student_info.graduation_status != 'graduated' %}
+                                Your current status is: <strong>{{ student_info.graduation_status | capitalize }}</strong>
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

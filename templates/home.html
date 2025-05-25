@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Welcome Card -->
+        <div class="card mb-4 fade-in">
+            <div class="card-body text-center p-4">
+                <img src="{{ url_for('static', filename='iytelogo.png') }}" alt="IYTE Logo" class="logo mb-3">
+                <h1 class="display-6 fw-bold mb-2">Welcome, {{ name }}</h1>
+                <p class="text-muted mb-0">{{ role | capitalize }} Dashboard</p>
+            </div>
+        </div>
+
+        <!-- User Info Card -->
+        <div class="card mb-4 fade-in">
+            <div class="card-header">
+                <i class="bi bi-person-badge me-2"></i>
+                Profile Information
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    {% if role == 'student' %}
+                        <div class="col-md-6">
+                            <div class="user-info">
+                                <p><i class="bi bi-person-vcard me-2"></i><strong>Student ID:</strong> {{ student_id }}</p>
+                                <p><i class="bi bi-building me-2"></i><strong>Faculty:</strong> {{ faculty }}</p>
+                                <p><i class="bi bi-diagram-2 me-2"></i><strong>Department:</strong> {{ department }}</p>
+                                <p>
+                                    <i class="bi bi-mortarboard me-2"></i>
+                                    <strong>Graduation Status:</strong>
+                                    <span class="badge bg-{{ 'success' if graduation_status == 'eligible' else ('primary' if graduation_status == 'graduated' else 'secondary') }}">
+                                        {{ graduation_status | capitalize }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-3">
+                                {% if graduation_status == 'eligible' %}
+                                    <button id="requestGraduationBtn" class="btn btn-success btn-lg">
+                                        <i class="bi bi-mortarboard-fill me-2"></i>
+                                        Request Graduation
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-lg" disabled>
+                                        <i class="bi bi-mortarboard me-2"></i>
+                                        Request Graduation
+                                    </button>
+                                {% endif %}
+                                {% if graduation_status == 'graduated' %}
+                                    {% if has_termination_request %}
+                                        <a href="{{ url_for('view_termination_status') }}" class="btn btn-info btn-lg">
+                                            <i class="bi bi-list-check me-2"></i>
+                                            View Termination Status
+                                            <span class="badge bg-light text-dark ms-2">{{ termination_status | capitalize }}</span>
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('request_termination') }}" class="btn btn-danger btn-lg">
+                                            <i class="bi bi-box-arrow-right me-2"></i>
+                                            Request Termination
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    <button class="btn btn-outline-danger btn-lg" disabled title="Available after graduation">
+                                        <i class="bi bi-box-arrow-right me-2"></i>
+                                        Request Termination
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% elif role == 'advisor' %}
+                        <div class="col-md-6">
+                            <div class="user-info">
+                                <p><i class="bi bi-diagram-2 me-2"></i><strong>Department:</strong> {{ department_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-3">
+                                <a href="{{ url_for('view_advisees') }}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-people-fill me-2"></i>
+                                    View Advisees
+                                </a>
+                                <a href="{{ url_for('prepare_graduation_list') }}" class="btn btn-success btn-lg">
+                                    <i class="bi bi-list-check me-2"></i>
+                                    Prepare Graduation List
+                                </a>
+                            </div>
+                        </div>
+                    {% elif role == 'department_secretary' %}
+                        <div class="col-md-6">
+                            <div class="user-info">
+                                <p><i class="bi bi-diagram-2 me-2"></i><strong>Department:</strong> {{ department_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-3">
+                                <a href="{{ url_for('view_advisor_lists') }}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-list-stars me-2"></i>
+                                    View Advisor Lists
+                                </a>
+                                <a href="{{ url_for('prepare_department_list') }}" class="btn btn-success btn-lg">
+                                    <i class="bi bi-list-check me-2"></i>
+                                    Prepare Department List
+                                </a>
+                            </div>
+                        </div>
+                    {% elif role == 'deanery' %}
+                        <div class="col-md-6">
+                            <div class="user-info">
+                                <p><i class="bi bi-building me-2"></i><strong>Faculty:</strong> {{ faculty_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-3">
+                                <a href="{{ url_for('view_department_lists') }}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-list-stars me-2"></i>
+                                    View Department Lists
+                                </a>
+                                <a href="{{ url_for('prepare_faculty_list') }}" class="btn btn-success btn-lg">
+                                    <i class="bi bi-list-check me-2"></i>
+                                    Prepare Faculty List
+                                </a>
+                            </div>
+                        </div>
+                    {% elif role == 'student_affairs' %}
+                        <div class="col-12">
+                            <div class="d-grid gap-3">
+                                <a href="{{ url_for('view_faculty_lists') }}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-list-stars me-2"></i>
+                                    View Faculty Lists
+                                </a>
+                                <a href="{{ url_for('prepare_university_list') }}" class="btn btn-success btn-lg">
+                                    <i class="bi bi-list-check me-2"></i>
+                                    Prepare University List
+                                </a>
+                            </div>
+                        </div>
+                    {% elif role == 'unit' %}
+                        <div class="col-12">
+                            <div class="user-info mb-4">
+                                <h4 class="mb-3">
+                                    <i class="bi bi-building-gear me-2"></i>
+                                    {{ unit_role|title }} Unit Dashboard
+                                </h4>
+                                <p class="text-muted">
+                                    Review and process student termination requests for your unit.
+                                </p>
+                            </div>
+                            <div class="d-grid">
+                                <a href="{{ url_for('view_pending_terminations') }}" class="btn btn-danger btn-lg">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    View Pending Termination Requests
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% if role == 'student' and graduation_status == 'eligible' %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const requestGraduationBtn = document.getElementById('requestGraduationBtn');
+    if (requestGraduationBtn) {
+        requestGraduationBtn.addEventListener('click', function() {
+            // Disable button to prevent double-clicks
+            this.disabled = true;
+            this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+            
+            fetch('/api/request_graduation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert('✅ ' + data.message);
+                    // Refresh the page to update the graduation status
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert('❌ ' + data.message);
+                    // Re-enable button
+                    this.disabled = false;
+                    this.innerHTML = '<i class="bi bi-mortarboard-fill me-2"></i>Request Graduation';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ An error occurred while processing your request. Please try again.');
+                // Re-enable button
+                this.disabled = false;
+                this.innerHTML = '<i class="bi bi-mortarboard-fill me-2"></i>Request Graduation';
+            });
+        });
+    }
+});
+</script>
+{% endif %}
+{% endblock %}
+
