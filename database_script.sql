@@ -441,21 +441,21 @@ END;
 
 -- Sample users
 INSERT INTO users (id, email, password, role) VALUES
-(1, 'ali@student.edu', 'hashedpass1', 'student'),
-(2, 'ayse@advisor.edu', 'hashedpass2', 'advisor'),
-(3, 'fatma@secretary.edu', 'hashedpass3', 'department_secretary'),
-(4, 'mehmet@affairs.edu', 'hashedpass4', 'student_affairs'),
-(5, 'ahmet@deanery.edu', 'hashedpass5', 'deanery'),
-(6, 'zeynep@student.edu', 'hashedpass6', 'student'),
-(7, 'kerem@advisor.edu', 'hashedpass7', 'advisor'),
-(8, 'leyla@secretary.edu', 'hashedpass8', 'department_secretary'),
-(9, 'omer@affairs.edu', 'hashedpass9', 'student_affairs'),
-(10, 'sena@deanery.edu', 'hashedpass10', 'deanery'),
-(11, 'library@library.edu', 'hashedpass11', 'unit'),
+(1, 'ali@std.iyte.edu.tr', 'hashedpass1', 'student'),
+(2, 'ayse@iyte.edu.tr', 'hashedpass2', 'advisor'),
+(3, 'fatma@iyte.edu.tr', 'hashedpass3', 'department_secretary'),
+(4, 'mehmet@iyte.edu.tr', 'hashedpass4', 'student_affairs'),
+(5, 'ahmet@iyte.edu.tr', 'hashedpass5', 'deanery'),
+(6, 'zeynep@std.iyte.edu.tr', 'hashedpass6', 'student'),
+(7, 'kerem@iyte.edu.tr', 'hashedpass7', 'advisor'),
+(8, 'leyla@iyte.edu.tr', 'hashedpass8', 'department_secretary'),
+(9, 'omer@iyte.edu.tr', 'hashedpass9', 'student_affairs'),
+(10, 'sena@iyte.edu.tr', 'hashedpass10', 'deanery'),
+(11, 'tarik@library.edu', 'hashedpass11', 'unit'),
 (12, 'alumni@alumni.edu', 'hashedpass12', 'unit'),
 (13, 'sks@sks.edu', 'hashedpass13', 'unit'),
 (14, 'it@it.edu', 'hashedpass14', 'unit'),
-(15, 'affairs@affairs.edu', 'hashedpass15', 'unit');
+(15, 'affairs@affairs.edu', 'hashedpass15', 'unit');
 
 -- Sample students
 INSERT INTO students (id, student_id, faculty, department, graduation_status) VALUES
