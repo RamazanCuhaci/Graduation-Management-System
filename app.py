@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 DATABASE = 'database.db'
 # Set to True to reset the DB every time the app runs (dev only!)
-RESET_DB = False
+RESET_DB = True
 
 
 # Feature flag to control access to advanced features
